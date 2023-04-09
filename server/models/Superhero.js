@@ -3,8 +3,15 @@ const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
     class Superhero extends Model {
-        static associate() {
-
+        static associate({ Superpower, Image }) {
+            Superhero.hasMany(Superpower, {
+                foreignKey: 'superheroId',
+                as: 'superpowers'
+            });
+            Superhero.hasMany(Image, {
+                foreignKey: 'superheroId',
+                as: 'images'
+            });
         } 
     }
     Superhero.init(
