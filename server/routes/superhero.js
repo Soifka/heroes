@@ -16,8 +16,8 @@ heroRouter
 .put(imagesUpload, HeroController.updateHeroById)
 .delete(HeroController.deleteHeroById);
 
-heroRouter.use('/:superheroId/images', imageRouter);
+heroRouter.use('/:superheroId/images/', imageRouter);
 
-heroRouter.use('/:superheroId/superpowers', powerRouter);
+heroRouter.use('/:superheroId/superpowers/', powerRouter);
 
 module.exports = heroRouter;

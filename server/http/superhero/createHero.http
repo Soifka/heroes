@@ -1,0 +1,11 @@
+POST http://localhost:5000/api/superheroes HTTP/1.1
+Content-Type: application/json
+
+{
+    "nickname": "Ironman",
+    "realName": "Tony Stark",
+    "originDescription": "Really strong guy",
+    "catchphrase": "I am Ironman",
+    "images": [],
+    "superpowers": ["flight", "superhuman strength"]
+}
