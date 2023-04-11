@@ -18,6 +18,6 @@ heroRouter
 
 heroRouter.use('/:superheroId/images', imageRouter);
 
-heroRouter.use('/:superheroId/powers', powerRouter);
+heroRouter.use('/:superheroId/superpowers', powerRouter);
 
 module.exports = heroRouter;
