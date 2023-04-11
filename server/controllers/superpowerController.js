@@ -21,7 +21,7 @@ module.exports.addHeroPowers = async(req, res, next) => {
     try {
         const { params: { superheroId }, body } = req;
 
-        const powers = body.powers.map(name => ({name, superheroId}));
+        const powers = body.superpowers.map(name => ({name, superheroId}));
         
         const createdPowers = await Superpower.bulkCreate(powers);
 
