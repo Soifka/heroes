@@ -4,10 +4,12 @@ const httpClient = axios.create({
     baseURL: 'http://localhost:5000/api'
 })
 
-export const getHeroes = async () => httpClient.get('/superheroes');
+export const getHeroes = async () => await httpClient.get('/superheroes');
 
-export const deleteHero = async (superheroId) => httpClient.delete(`/superheroes/${superheroId}`);
+export const deleteHero = async (superheroId) => await httpClient.delete(`/superheroes/${superheroId}`);
 
-export const deletePower = async (superheroId, powerId) => httpClient.delete(`/superheroes/${superheroId}/superpowers/${powerId}`);
+export const deletePower = async (superheroId, powerId) => await httpClient.delete(`/superheroes/${superheroId}/superpowers/${powerId}`);
 
-export const addPower = async (superheroId, superpowers) => httpClient.post(`/superheroes/${superheroId}/superpowers`, {superpowers});
+export const addPower = async (superheroId, superpowers) => await httpClient.post(`/superheroes/${superheroId}/superpowers`, {superpowers});
+
+export const editHero = async (superheroId, superhero) => await httpClient.put(`/superheroes/${superheroId}`, superhero);

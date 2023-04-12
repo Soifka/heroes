@@ -3,7 +3,7 @@ import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import styles from './Hero.module.css';
-import { deleteHero, deletePower, addPower } from '../../api';
+import { deleteHero, deletePower, addPower, editHero } from '../../api';
 import { getHeroes } from '../../redux/slices/heroSlice';
 import { useDispatch } from 'react-redux';
 import Modal from 'react-modal';
@@ -15,14 +15,34 @@ Modal.setAppElement('#root');
 const validationPowerSchema = yup.object().shape({
     powerName: yup.string()
     .trim()
-    .min(3, 'Superpower name should be longer than 3 symbols')
+    .min(3, 'Length of superpower name should be at least 3 symbols')
     .required('Superpower name is required')
+})
+
+const validationHeroSchema = yup.object().shape({
+    nickname: yup.string()
+        .trim()
+        .min(3, 'Length of superhero nickname should be at least 3 symbols')
+        .required('Superhero nickname is required'),
+    realName: yup.string()
+        .trim()
+        .min(3, 'Length of superhero real name should be at least 3 symbols')
+        .required('Superhero real name is required'),
+    originDescription: yup.string()
+        .trim()
+        .min(10, 'Length of superhero origin description should be at least 10 symbols')
+        .required('Superhero origin description is required'),
+    catchphrase: yup.string()
+        .trim()
+        .min(3, 'Length of superhero catchphrase should be at least 3 symbols')
+        .required('Superhero catchphrase is required'),
 })
 
 
 const Hero = ({hero}) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [modalAddPowerOpen, setModalAddPowerOpen] = useState(false);
+    const [modalEditHeroOpen, setModalEditHeroOpen] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -53,7 +73,17 @@ const Hero = ({hero}) => {
             setModalAddPowerOpen(false);
             resetForm();
         } catch (err) {
-            console.log(err);
+            console.error(err);
+        }
+    }
+
+    const editHeroHandler = async (values) => {
+        try {
+            await editHero(hero.id, values);
+            dispatch(getHeroes());
+            setModalEditHeroOpen(false);
+        } catch (err) {
+            console.error(err);
         }
     }
 
@@ -88,6 +118,8 @@ const Hero = ({hero}) => {
                     </table>
                 ))}
             </ul>
+
+            <button onClick={() => setModalEditHeroOpen(true)}>Edit superhero</button>
 
             <button onClick={() => setModalOpen(true)}>Delete superhero</button>
 
@@ -145,6 +177,71 @@ const Hero = ({hero}) => {
 
                             <button type="submit">Confirm</button>
                             <button type="button" onClick={() => setModalAddPowerOpen(false)}>Cancel</button>
+                        </Form>
+                    )}
+                </Formik>
+            </Modal>
+
+            <Modal
+                isOpen={modalEditHeroOpen}
+                onRequestClose={() => setModalEditHeroOpen(false)}
+                contentLabel="Edit Superhero Modal"
+                style={{
+                    content: {
+                        top: '50%',
+                        left: '50%',
+                        right: 'auto',
+                        bottom: 'auto',
+                        marginRight: '-50%',
+                        transform: 'translate(-50%, -50%)',
+                    }
+                }}
+            >
+                <h2>Edit superhero</h2>
+
+                <Formik
+                    initialValues={{
+                        nickname: hero.nickname,
+                        realName: hero.realName,
+                        originDescription: hero.originDescription,
+                        catchphrase: hero.catchphrase
+                    }}
+                    validationSchema={validationHeroSchema}
+                    onSubmit={editHeroHandler}
+                >
+                    {(props) => (
+                        <Form>
+                            <div>
+                                <label>
+                                    Superhero nickname
+                                    <Field type="text" name="nickname" />
+                                    <ErrorMessage name="nickname" component="div" />
+                                </label>
+                            </div>
+                            <div>
+                                <label>
+                                    Superhero real name
+                                    <Field type="text" name="realName" />
+                                    <ErrorMessage name="realName" component="div" />
+                                </label>
+                            </div>
+                            <div>
+                                <label>
+                                    Superhero origin description
+                                    <Field type="text" name="originDescription" />
+                                    <ErrorMessage name="originDescription" component="div" />
+                                </label>
+                            </div>
+                            <div>
+                                <label>
+                                    Superhero catchphrase
+                                    <Field type="text" name="catchphrase" />
+                                    <ErrorMessage name="catchphrase" component="div" />
+                                </label>
+                            </div>
+
+                            <button type="submit">Confirm</button>
+                            <button type="button" onClick={() => setModalEditHeroOpen(false)}>Cancel</button>
                         </Form>
                     )}
                 </Formik>

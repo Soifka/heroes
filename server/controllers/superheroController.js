@@ -119,6 +119,7 @@ module.exports.getHeroById = async(req, res, next) => {
 module.exports.updateHeroById = async(req, res, next) => {
     try {
         const { params: { id }, body, body: { files } } = req;
+        console.log(body)
 
         const [count, [updatedHero]] = await Superhero.update(body, {
             where: {
