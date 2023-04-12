@@ -47,7 +47,7 @@ const Hero = ({hero}) => {
                 ))}
             </ul>
 
-            <button onClick={deleteHero}>Delete superhero</button>
+            <button onClick={deleteHandler}>Delete superhero</button>
         </article>
     );
 }
