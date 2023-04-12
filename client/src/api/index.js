@@ -7,3 +7,5 @@ const httpClient = axios.create({
 export const getHeroes = async () => httpClient.get('/superheroes');
 
 export const deleteHero = async (superheroId) => httpClient.delete(`/superheroes/${superheroId}`);
+
+export const deletePower = async (superheroId, powerId) => httpClient.delete(`/superheroes/${superheroId}/superpowers/${powerId}`);

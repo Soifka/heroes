@@ -1,14 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import styles from './Hero.module.css';
-import { deleteHero } from '../../api';
+import { deleteHero, deletePower } from '../../api';
 import { getHeroes } from '../../redux/slices/heroSlice';
 import { useDispatch } from 'react-redux';
+import Modal from 'react-modal';
+
+Modal.setAppElement('#root');
 
 
 const Hero = ({hero}) => {
+    const [modalOpen, setModalOpen] = useState(false);
+
     const dispatch = useDispatch();
 
     const settings = {
@@ -22,6 +27,13 @@ const Hero = ({hero}) => {
     const deleteHandler = async () => {
         await deleteHero((hero.id));
         dispatch(getHeroes());
+        setModalOpen(false);
+    }
+
+    const deletePowerHandler = async (powerId) => {
+        await deletePower(hero.id, powerId);
+        dispatch(getHeroes());
+        setModalOpen(false);
     }
 
     return (
@@ -43,11 +55,41 @@ const Hero = ({hero}) => {
             <p>Superpowers:</p>
             <ul>
                 {hero.superpowers.map((power) => (
-                    <li key={power.id}>{power.name}</li>
+                    <table>
+                        <tr>
+                            <td>
+                                <li key={power.id}>{power.name}</li>
+                            </td>
+                            <td>
+                                <button onClick={() => deletePowerHandler(power.id)}>Delete power</button>
+                            </td>
+                        </tr>
+                    </table>
                 ))}
             </ul>
 
-            <button onClick={deleteHandler}>Delete superhero</button>
+            <button onClick={() => setModalOpen(true)}>Delete superhero</button>
+
+            <Modal
+                isOpen={modalOpen}
+                onRequestClose={() => setModalOpen(false)}
+                contentLabel="Delete Hero Modal"
+                style={{
+                    content: {
+                        top: '50%',
+                        left: '50%',
+                        right: 'auto',
+                        bottom: 'auto',
+                        marginRight: '-50%',
+                        transform: 'translate(-50%, -50%)',
+                    }
+                }}
+            >
+                <h2>Delete superhero</h2>
+                <p>Are you sure you want to delete {hero.nickname}?</p>
+                <button onClick={deleteHandler}>Yes</button>
+                <button onClick={() => setModalOpen(false)}>No</button>
+            </Modal>
         </article>
     );
 }
