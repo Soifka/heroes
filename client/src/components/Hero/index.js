@@ -3,7 +3,7 @@ import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import styles from './Hero.module.css';
-import { deleteHero, deletePower, addPower, editHero } from '../../api';
+import { deleteHero, deletePower, addPower, editHero, deleteImage } from '../../api';
 import { getHeroes } from '../../redux/slices/heroSlice';
 import { useDispatch } from 'react-redux';
 import Modal from 'react-modal';
@@ -44,6 +44,7 @@ const Hero = ({hero}) => {
     const [modalAddPowerOpen, setModalAddPowerOpen] = useState(false);
     const [modalEditHeroOpen, setModalEditHeroOpen] = useState(false);
     const [modalAddImageOpen, setModalAddImageOpen] = useState(false);
+    const [currentSlide, setCurrentSlide] = useState(0);
 
     const dispatch = useDispatch();
 
@@ -52,7 +53,10 @@ const Hero = ({hero}) => {
         infinite: true,
         speed: 500,
         slidesToShow: 1,
-        slidesToScroll: 1
+        slidesToScroll: 1,
+        afterChange: (current) => {
+            setCurrentSlide(current);
+        }
     }
 
     const deleteHandler = async () => {
@@ -63,6 +67,11 @@ const Hero = ({hero}) => {
 
     const deletePowerHandler = async (powerId) => {
         await deletePower(hero.id, powerId);
+        dispatch(getHeroes());
+    }
+
+    const deleteImageHandler = async () => {
+        await deleteImage(hero.id, hero.images[currentSlide].id);
         dispatch(getHeroes());
     }
 
@@ -320,6 +329,9 @@ const Hero = ({hero}) => {
                     )}
                 </Formik>
             </Modal>
+
+            {hero.images.length > 0 && <button onClick={deleteImageHandler}>Delete current image</button>}                        
+
         </article>
     );
 }
