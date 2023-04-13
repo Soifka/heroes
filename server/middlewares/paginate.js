@@ -1,4 +1,4 @@
-const MAX_LIMIT = 20;
+const MAX_LIMIT = 5;
 
 module.exports = async(req, res, next) => {
     try {
