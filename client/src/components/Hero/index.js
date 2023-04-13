@@ -39,7 +39,7 @@ const validationHeroSchema = yup.object().shape({
 })
 
 
-const Hero = ({hero}) => {
+const Hero = ({hero, currentPage}) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [modalAddPowerOpen, setModalAddPowerOpen] = useState(false);
     const [modalEditHeroOpen, setModalEditHeroOpen] = useState(false);
@@ -61,24 +61,24 @@ const Hero = ({hero}) => {
 
     const deleteHandler = async () => {
         await deleteHero((hero.id));
-        dispatch(getHeroes());
+        dispatch(getHeroes(currentPage));
         setModalOpen(false);
     }
 
     const deletePowerHandler = async (powerId) => {
         await deletePower(hero.id, powerId);
-        dispatch(getHeroes());
+        dispatch(getHeroes(currentPage));
     }
 
     const deleteImageHandler = async () => {
         await deleteImage(hero.id, hero.images[currentSlide].id);
-        dispatch(getHeroes());
+        dispatch(getHeroes(currentPage));
     }
 
     const handleAddPowerSubmit = async (values, {resetForm}) => {
         try {
             await addPower(hero.id, [values.powerName]);
-            dispatch(getHeroes());
+            dispatch(getHeroes(currentPage));
             setModalAddPowerOpen(false);
             resetForm();
         } catch (err) {
@@ -290,7 +290,7 @@ const Hero = ({hero}) => {
                             });
                             if(response.ok) {
                                 console.log('Images uploaded successfully');
-                                dispatch(getHeroes());
+                                dispatch(getHeroes(currentPage));
                             } else {
                                 console.log('Upload images failed');
                             }
