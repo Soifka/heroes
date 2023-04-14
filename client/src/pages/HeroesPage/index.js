@@ -8,6 +8,8 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as yup from 'yup';
 import { addHero } from '../../redux/slices/heroSlice';
 import CONSTANTS from '../../constants';
+import PacmanLoader from "react-spinners/PacmanLoader";
+
 
 Modal.setAppElement('#root');
 
@@ -63,7 +65,15 @@ const HeroesPage = () => {
     }
 
     if(isLoading) {
-        return <div>LOADING</div>;
+        return <PacmanLoader
+            color="#36d7b7"
+            cssOverride={{
+                display: "block",
+                margin: "0 auto"
+            }}
+            loading={isLoading}
+            size={150}
+        />;
     }
 
     if(error) {
