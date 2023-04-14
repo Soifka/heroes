@@ -6,7 +6,7 @@ import styles from './HeroesPage.module.css';
 import Modal from 'react-modal';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as yup from 'yup';
-import { addHero } from '../../api';
+import { addHero } from '../../redux/slices/heroSlice';
 import CONSTANTS from '../../constants';
 
 Modal.setAppElement('#root');
@@ -75,7 +75,7 @@ const HeroesPage = () => {
         hero.nickname.toLowerCase().includes(searchHero.toLowerCase())
     )
 
-    const heroesCards = filteredHeroes.map(hero => <Hero key={hero.id} hero={hero} currentPage={pageNumber} />)
+    const heroesCards = filteredHeroes.map(hero => <Hero key={hero.id} hero={hero} currentPage={pageNumber} setPageNumber={setPageNumber} />)
 
     return (
         <div>
@@ -108,8 +108,9 @@ const HeroesPage = () => {
                     validationSchema={validationHeroSchema}
                     onSubmit={async(values, {resetForm}) => {
                         try {
-                            await addHero(values);
+                            await dispatch(addHero(values));
                             dispatch(getHeroes());
+                            setPageNumber(0);
                             setModalAddHeroOpen(false);
                             resetForm();
                         } catch (error) {

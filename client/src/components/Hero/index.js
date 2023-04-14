@@ -3,8 +3,7 @@ import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import styles from './Hero.module.css';
-import { deleteHero, deletePower, addPower, editHero, deleteImage } from '../../api';
-import { getHeroes } from '../../redux/slices/heroSlice';
+import { getHeroes, deleteHero, deletePower, addPower, editHero, deleteImage, addImage } from '../../redux/slices/heroSlice';
 import { useDispatch } from 'react-redux';
 import Modal from 'react-modal';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
@@ -39,7 +38,7 @@ const validationHeroSchema = yup.object().shape({
 })
 
 
-const Hero = ({hero, currentPage}) => {
+const Hero = ({hero, currentPage, setPageNumber}) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [modalAddPowerOpen, setModalAddPowerOpen] = useState(false);
     const [modalEditHeroOpen, setModalEditHeroOpen] = useState(false);
@@ -60,24 +59,24 @@ const Hero = ({hero, currentPage}) => {
     }
 
     const deleteHandler = async () => {
-        await deleteHero((hero.id));
-        dispatch(getHeroes(currentPage));
+        await dispatch(deleteHero(hero.id));
+        await dispatch(getHeroes(currentPage));
         setModalOpen(false);
     }
 
     const deletePowerHandler = async (powerId) => {
-        await deletePower(hero.id, powerId);
+        await dispatch(deletePower({superheroId: hero.id, powerId}));
         dispatch(getHeroes(currentPage));
     }
 
     const deleteImageHandler = async () => {
-        await deleteImage(hero.id, hero.images[currentSlide].id);
+        await dispatch(deleteImage({superheroId: hero.id, imageId: hero.images[currentSlide].id}));
         dispatch(getHeroes(currentPage));
     }
 
     const handleAddPowerSubmit = async (values, {resetForm}) => {
         try {
-            await addPower(hero.id, [values.powerName]);
+            await dispatch(addPower({superheroId: hero.id, powerName: [values.powerName]}));
             dispatch(getHeroes(currentPage));
             setModalAddPowerOpen(false);
             resetForm();
@@ -88,8 +87,9 @@ const Hero = ({hero, currentPage}) => {
 
     const editHeroHandler = async (values) => {
         try {
-            await editHero(hero.id, values);
+            await dispatch(editHero({superheroId: hero.id, values}));
             dispatch(getHeroes());
+            setPageNumber(0);
             setModalEditHeroOpen(false);
         } catch (err) {
             console.error(err);
@@ -284,16 +284,8 @@ const Hero = ({hero, currentPage}) => {
                             formData.append("images", file);
                         })
                         try {
-                            const response = await fetch(`http://localhost:5000/api/superheroes/${hero.id}/images`, {
-                                method:'POST',
-                                body: formData
-                            });
-                            if(response.ok) {
-                                console.log('Images uploaded successfully');
-                                dispatch(getHeroes(currentPage));
-                            } else {
-                                console.log('Upload images failed');
-                            }
+                            await dispatch(addImage({superheroId: hero.id, formData}));
+                            dispatch(getHeroes(currentPage));
                         } catch (error) {
                             console.error(error)
                         } finally {
